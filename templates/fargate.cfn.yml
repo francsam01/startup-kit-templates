@@ -677,7 +677,7 @@ Resources:
       TaskRoleArn: !GetAtt DefaultTaskRole.Arn
       ExecutionRoleArn: !GetAtt DefaultTaskExecutionRole.Arn
       ContainerDefinitions:
-        - Name: !Ref GitHubSourceRepo
+        - Name: !Ref AWS::StackName
           Image: !Ref SeedDockerImage
           Essential: true
           PortMappings:
