@@ -108,7 +108,7 @@ Parameters:
 
   CodeBuildDockerImage:
     Type: String
-    Default: aws/codebuild/docker:17.09.0
+    Default: aws/codebuild/standard:3.0
 
   SeedDockerImage:
     Type: String
