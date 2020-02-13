@@ -105,11 +105,11 @@ Parameters:
     MaxLength: 255
     ConstraintDescription: Value must be between 1 and 255 characters
 
-  GitSourceRepo:
+  GitHubSourceRepo:
     Type: String
     Description: CodeCommit or GitHub source repository - must contain a Dockerfile in the base
 
-  GitBranch:
+  GitHubBranch:
     Type: String
     Default: master
     Description: CodeCommit or GitHub git repository branch - change triggers a new build
@@ -297,8 +297,8 @@ Metadata:
         Parameters:
           - CodeBuildDockerImage
           - SeedDockerImage
-          - GitSourceRepo
-          - GitBranch
+          - GitHubSourceRepo
+          - GitHubBranch
           - GitHubUser
           - GitHubToken
       - Label:
@@ -333,9 +333,9 @@ Metadata:
         default: Tagged Images Max
       DaysToRetainUntaggedContainerImages:
         default: Untagged Images
-      GitSourceRepo:
+      GitHubSourceRepo:
         default: Git Repo
-      GitBranch:
+      GitHubBranch:
         default: Git Branch
       GitHubUser:
         default: GitHub User
@@ -421,8 +421,8 @@ Resources:
         AppProtocol: !Ref AppProtocol
         SSLCertificateArn: !Ref SSLCertificateArn
         HealthCheckPath: !Ref HealthCheckPath
-        GitSourceRepo: !Ref GitSourceRepo
-        GitBranch: !Ref GitBranch
+        GitHubSourceRepo: !Ref GitHubSourceRepo
+        GitHubBranch: !Ref GitHubBranch
         GitHubToken: !Ref GitHubToken
         GitHubUser: !Ref GitHubUser
         CodeBuildDockerImage: !Ref CodeBuildDockerImage

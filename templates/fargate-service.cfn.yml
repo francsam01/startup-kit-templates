@@ -88,11 +88,11 @@ Parameters:
     MaxLength: 255
     ConstraintDescription: Value must be between 1 and 255 characters
 
-  GitSourceRepo:
+  GitHubSourceRepo:
     Type: String
     Description: CodeCommit or GitHub source repository - must contain a Dockerfile in the base
 
-  GitBranch:
+  GitHubBranch:
     Type: String
     Default: master
     Description: CodeCommit or GitHub git repository branch - change triggers a new build
@@ -306,7 +306,7 @@ Resources:
                   - printf '[{"name":"${ServiceName}","imageUri":"%s"}]' $REPOSITORY_URI:$TAG > build.json
             artifacts:
               files: build.json
-          - ServiceName: !Ref GitSourceRepo
+          - ServiceName: !Ref GitHubSourceRepo
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
@@ -317,9 +317,9 @@ Resources:
           - Name: ENVIRONMENT_NAME
             Value: !Ref EnvironmentName
           - Name: REPOSITORY_NAME
-            Value: !Ref GitSourceRepo
+            Value: !Ref GitHubSourceRepo
           - Name: REPOSITORY_BRANCH
-            Value: !Ref GitBranch
+            Value: !Ref GitHubBranch
       Name: !Ref AWS::StackName
       ServiceRole: !Ref CodeBuildServiceRole
       VpcConfig:
@@ -393,8 +393,8 @@ Resources:
                 Version: 1
                 Provider: CodeCommit
               Configuration:
-                RepositoryName: !Ref GitSourceRepo
-                BranchName: !Ref GitBranch
+                RepositoryName: !Ref GitHubSourceRepo
+                BranchName: !Ref GitHubBranch
               OutputArtifacts:
                 - Name: App
               RunOrder: 1
@@ -454,8 +454,8 @@ Resources:
                 Provider: GitHub
               Configuration:
                 Owner: !Ref GitHubUser
-                Repo: !Ref GitSourceRepo
-                Branch: !Ref GitBranch
+                Repo: !Ref GitHubSourceRepo
+                Branch: !Ref GitHubBranch
                 OAuthToken: !Ref GitHubToken
               OutputArtifacts:
                 - Name: App
@@ -538,7 +538,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /fargate/${AWS::StackName}/${GitSourceRepo}/${GitBranch}/${EnvironmentName}
+      LogGroupName: !Sub /fargate/${AWS::StackName}/${GitHubSourceRepo}/${GitHubBranch}/${EnvironmentName}
       RetentionInDays: !Ref ContainerLogRetentionInDays
 
   TaskRole:
@@ -579,7 +579,7 @@ Resources:
       TaskRoleArn: !GetAtt TaskRole.Arn
       ExecutionRoleArn: !GetAtt TaskExecutionRole.Arn
       ContainerDefinitions:
-        - Name: !Ref GitSourceRepo
+        - Name: !Ref GitHubSourceRepo
           Image: !Ref SeedDockerImage
           Essential: true
           PortMappings:
@@ -604,7 +604,7 @@ Resources:
             Options:
               awslogs-region: !Ref AWS::Region
               awslogs-group: !Ref LogGroup
-              awslogs-stream-prefix: !Ref GitSourceRepo
+              awslogs-stream-prefix: !Ref GitHubSourceRepo
     DependsOn:
       - LogGroup
       - TaskExecutionRole
@@ -639,7 +639,7 @@ Resources:
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
-        - ContainerName: !Ref GitSourceRepo
+        - ContainerName: !Ref GitHubSourceRepo
           ContainerPort:
             Fn::ImportValue: !Sub ${NetworkStackName}-AppIngressPort
           TargetGroupArn: !Ref TargetGroup
@@ -805,9 +805,9 @@ Resources:
       TargetType: ip
       Tags:
       - Key: Repository
-        Value: !Ref GitSourceRepo
+        Value: !Ref GitHubSourceRepo
       - Key: Branch
-        Value: !Ref GitBranch
+        Value: !Ref GitHubBranch
       - Key: Stack
         Value: !Ref AWS::StackName
       - Key: Environment
