@@ -702,8 +702,8 @@ Resources:
             LogDriver: awslogs
             Options:
               awslogs-region: !Ref AWS::Region
-              awslogs-group: !Ref DefaultLogGroup
-              awslogs-stream-prefix: !Ref GitHubSourceRepo
+              awslogs-group: !Ref AWS::StackName
+              awslogs-stream-prefix: !Ref AWS::StackName
     DependsOn:
       - DefaultContainerBucket
       - DefaultLogGroup
@@ -718,7 +718,7 @@ Resources:
       LaunchType: FARGATE
       TaskDefinition: !Ref DefaultFargateTaskDefinition
       LoadBalancers:
-        - ContainerName: !Ref GitHubSourceRepo
+        - ContainerName: !Ref AWS::StackName
           ContainerPort:
             Fn::ImportValue: !Sub ${NetworkStackName}-AppIngressPort
           TargetGroupArn: !Ref DefaultTargetGroup
